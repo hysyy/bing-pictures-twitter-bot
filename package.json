@@ -1,0 +1,27 @@
+{
+  "name": "dailybingphoto",
+  "version": "1.0.0",
+  "description": "A twitter bot that fetches the daily pictures from Bing and posts them on Twitter",
+  "main": "index.js",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "node-fetch": "^2.6.1",
+    "request": "^2.88.2",
+    "twit": "^2.2.11"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hysyy/bing-pictures-twitter-bot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hysyy/bing-pictures-twitter-bot/issues"
+  },
+  "homepage": "https://github.com/hysyy/bing-pictures-twitter-bot#readme"
+}
