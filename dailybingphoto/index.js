@@ -1,3 +1,4 @@
+require('dotenv').config()
 const fetch = require("node-fetch");
 const request = require('request').defaults({ encoding: null });
 const Twitter = require('twit');
@@ -19,46 +20,65 @@ const getData = async () => {
     return data.images[0];
 }
 
+const image = (bingData) =>{
+    fetch("https://www.bing.com" + bingData.url)
+    .then(res => {
+        const dest = fs.createWriteStream("bing.png");
+        res.body.pipe(dest);
+    });
+}
+
 // Bot code
 const tweetBot = async () => {
     const bingData = await getData();
     const tweetText = `"${bingData.title}"\r\n\r\n---------------------------------\r\n${bingData.copyright}`;
 
     //Image Fetch
-    (async function (){
-        request("https://www.bing.com" + bingData.url).pipe(fs.createWriteStream('bing.png'));
-    })
-    
+    image(bingData);
+    const checkTime = 4000;
     const filename = 'bing.png';
     const params = {
         encoding: 'base64'
     }
-    const b64 = fs.readFileSync(filename, params);
 
-    // (2) If image uploaded, post tweet
-    const uploaded = (err, data, response) => {
-        const id = data.media_id_string;
-        const tweet = {
-            status: tweetText,
-            media_ids: [id]
+    const timerId = setInterval(() => {
+        const isExists = fs.existsSync(filename)
+        if (isExists) {
+            const b64 = fs.readFileSync(filename, params);
+            clearInterval(timerId)
+
+            // (2) If image uploaded, post tweet
+            const uploaded = (err, data, response) => {
+                const id = data.media_id_string;
+                const tweet = {
+                    status: tweetText,
+                    media_ids: [id]
+                }
+                console.log("Image Uploaded!");
+                Tweet.post('statuses/update', tweet, tweeted);
+            }
+
+            // (3) If tweet posted, log response
+            const tweeted = (err, data, response) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log("Tweet Sent!");
+                    fs.unlinkSync("bing.png")
+                }
+            }
+
+            // (1) Upload media to twitter
+            Tweet.post('media/upload', {
+                media_data: b64
+            }, uploaded);
+
         }
-        console.log("Image Uploaded!");
-        Tweet.post('statuses/update', tweet, tweeted);
-    }
+        console.log("Check...")
+    }, checkTime)
 
-    // (3) If tweet posted, log response
-    const tweeted = (err, data, response) => {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log("Tweet Sent!");
-        }
-    }
 
-    // (1) Upload media to twitter
-    Tweet.post('media/upload', {
-        media_data: b64
-    }, uploaded);
+
 
 }
 
