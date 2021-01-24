@@ -1,4 +1,3 @@
-require('dotenv').config()
 const fetch = require("node-fetch");
 const request = require('request').defaults({ encoding: null });
 const Twitter = require('twit');
