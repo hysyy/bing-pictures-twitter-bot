@@ -1,6 +1,5 @@
 require('dotenv').config()
 const fetch = require("node-fetch");
-const request = require('request').defaults({ encoding: null });
 const Twitter = require('twit');
 const fs = require("fs")
 
@@ -74,14 +73,12 @@ const tweetBot = async () => {
             }, uploaded);
 
         }
-        console.log("Check...")
+        console.log("Check if image exists...")
     }, checkTime)
-
-
-
-
+    
+    // Run once a day
+    setTimeout(tweetBot, 86400000);
 }
 
-//Run the bot and set interval to 1 day
+// Cycle start
 tweetBot();
-setInterval(tweetBot, 86400000);
